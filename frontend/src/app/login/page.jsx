@@ -64,13 +64,6 @@ const LogIn = () => {
         </Button>
       </form>
 
-      {/* Continue with Google Button */}
-      <Button
-        onClick={handleGoogleLogin}
-        className="w-full max-w-sm mt-4 bg-blue-700 hover:bg-blue-800 text-white font-medium py-5 rounded-lg text-1xl"
-      >
-        Continue with Google <Google />
-      </Button>
     </div>
   );
 };
