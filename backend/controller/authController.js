@@ -1,34 +1,24 @@
 const User = require("../models/registerModel");
 const bcrypt = require("bcrypt");
-const generateToken = require("../utils/generateToken,js");
+const generateToken = require("../utils/generateToken.js");
 const dotenv = require("dotenv").config();
 
-const registerUser = async (request, response) => {
+ const registerUser =  async (request, response) => {
   try {
-    const { username, email, contact, address, password, age, profilePhoto } =
-      request.body;
-
-    if (!username || !email || !contact || !address || !password || !age) {
-      return response.status(400).json({
-        message: "Every field must be filled except profile photo!",
-      });
+    const { username, email, contact, address, password, age, profilePhoto, role } = request.body;
+    if(!username || !email || !contact || !address || !password || !age){
+      return response.status(400).json({message: "All fields are required"});
     }
 
-    const alreadyExists = await User.findOne({
-      $or: [{ email }, { username }, { contact }],
-    });
-    if (alreadyExists) {
-      return response.status(409).json({
-        message:
-          "User already registered with the same email, username, or contact!",
-      });
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return response.status(400).json({ message: "Email already exists!" });
     }
 
-    const salt = await bcrypt.genSalt(15);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    
+    const userRole = role || "user";
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const registeringUser = await User.create({
+    const newUser = new User({
       username,
       email,
       contact,
@@ -36,17 +26,15 @@ const registerUser = async (request, response) => {
       password: hashedPassword,
       age,
       profilePhoto,
+      role: userRole,
     });
 
-    return response.status(201).json({
-      message: "Account registered successfully. Now Login!",
-      user: registeringUser,
-    });
-  } catch (err) {
-    console.error(err);
-    return response.status(500).json({
-      message: err.message || "Error registering user",
-    });
+    await newUser.save();
+
+    response.status(201).json({ message: "User registered successfully!" });
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -54,25 +42,21 @@ const loginUser = async (request, response) => {
   try {
     const { email, password } = request.body;
 
-
     if (!email || !password) {
       return response.status(400).json({ message: "Both fields must be filled!" });
     }
-
 
     const user = await User.findOne({ email });
     if (!user) {
       return response.status(404).json({ message: "User not found!" });
     }
 
-
     const isPassMatch = await bcrypt.compare(password, user.password);
     if (!isPassMatch) {
       return response.status(401).json({ message: "Invalid password!" });
     }
 
-
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role); 
 
     response.cookie("token", token);
 
@@ -85,14 +69,14 @@ const loginUser = async (request, response) => {
         contact: user.contact,
         address: user.address,
         profilePhoto: user.profilePhoto,
+        role: user.role,
       },
     });
   } catch (err) {
-    console.error("Login error:", err);
-    return response.status(500).json({ message: "Internal server error" });
-  }
+      console.error("Login error:", err);
+      return response.status(500).json({ message: "Internal server error" });
+    }
 };
-
 
 const profile = async (request, response) => {
   try {

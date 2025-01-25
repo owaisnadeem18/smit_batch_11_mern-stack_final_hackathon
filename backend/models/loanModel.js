@@ -3,36 +3,38 @@ const { Schema } = mongoose;
 
 const loanSchema = new Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     category: {
       type: String,
-      required: [true, "Loan category is required!"],
-      enum: ["Education", "Wedding", "Business", "Home Construction"],
+      enum: ["education", "wedding", "business", "home construction"], 
+      required: true,
     },
-    subcategory: {
+    subCategory: {
       type: String,
-      required: [true, "Loan subcategory is required!"],
+      required: true, 
     },
-    amount: {
+    loanAmount: {
       type: Number,
-      required: [true, "Loan amount is required!"],
-      min: [1000, "Minimum loan amount is 1000!"],
+      required: true,
     },
-    durationMonths: {
-      type: Number,
-      required: [true, "Loan duration is required!"],
-      min: [1, "Minimum duration is 1 month!"],
+    duration: {
+      type: Number, 
+      required: true,
     },
-    interestRate: {
-      type: Number,
-      required: [true, "Interest rate is required!"],
-    },
-    description: {
+    status: {
       type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "Loan must be associated with a user!"],
+    approvalDate: {
+      type: Date,
+    },
+    repaymentDetails: {
+      type: String, 
     },
   },
   { timestamps: true }

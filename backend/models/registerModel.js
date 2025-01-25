@@ -15,7 +15,7 @@ const userSchema = new Schema(
     },
     contact: {
       type: String,
-      required: [true, "Contact is required!"], 
+      required: [true, "Contact is required!"],
       unique: [true, "Contact must be unique!"],
     },
     address: {
@@ -40,7 +40,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ["user", "admin"],
-      default: "user",
+      default: "user", 
     },
   },
   { timestamps: true }
