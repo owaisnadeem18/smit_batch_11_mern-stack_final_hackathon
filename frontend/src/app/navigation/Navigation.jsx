@@ -13,26 +13,10 @@ const Navigation = () => {
           SMIT Finance
         </h2>
 
-        {/* Navbar Links */}
-        <div className="space-x-6 text-xl font-medium">
-          <Link href={"/"} className="hover:text-teal-400 transition-all">
-            <FaHome className="inline mr-2" />
-            Home
-          </Link>
-          <Link href={"/about"} className="hover:text-teal-400 transition-all">
-            <FaUserAlt className="inline mr-2" />
-            About
-          </Link>
-          <Link href={"/settings"} className="hover:text-teal-400 transition-all">
-            <FaCog className="inline mr-2" />
-            Settings
-          </Link>
-        </div>
-
         {/* Log In Button */}
         <Link href={"/login"}>
-          <Button className="py-3 px-6 rounded-lg text-xl bg-teal-500 hover:bg-teal-600 transition-all">
-            Log In
+          <Button className="py-5 px-3 rounded-lg text-xl bg-teal-500 hover:bg-teal-600 transition-all">
+            Sign Up
           </Button>
         </Link>
       </div>
